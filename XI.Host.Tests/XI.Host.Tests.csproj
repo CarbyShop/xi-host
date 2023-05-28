@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XI.Host.Common\XI.Host.Common.csproj" />
+    <ProjectReference Include="..\XI.Host.Login\XI.Host.Login.csproj" />
+    <ProjectReference Include="..\XI.Host.Message\XI.Host.Message.csproj" />
+    <ProjectReference Include="..\XI.Host.Sockets\XI.Host.Sockets.csproj" />
+    <ProjectReference Include="..\XI.Host.SQL\XI.Host.SQL.csproj" />
+  </ItemGroup>
+
+</Project>

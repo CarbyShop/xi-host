@@ -1,0 +1,12 @@
+{
+  "ServerSettingsDirectory": "../../../../LandSandBoat/server/settings",
+  "Host": {
+    "LogType": "Console",
+    "LogVerbosity": "All",
+    "ServerPopulationLimit": 0,
+    "DelayCharacterCreatedResponse": 3000,
+    "ClientReceiveBufferSize": 2048,
+    "TcpServerBacklog": 511,
+    "CleanUpSessionsFrequency": 30
+  }
+}
