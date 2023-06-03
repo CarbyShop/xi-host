@@ -258,7 +258,7 @@ namespace XI.Host.Message
                             {
                                 Logger.Information($"Type '{messageContainer.type}' to {receivers.Count} receiver(s).", MethodBase.GetCurrentMethod());
 
-                                // zmq does not support threaded-safe sending.  An internal exception is thrown.
+                                // zmq does not support thread-safe sending.  An internal exception is thrown.
                                 // ParallelLoopResult result = 
                                 // Parallel.For(0, receivers.Count, (i) =>
                                 // {

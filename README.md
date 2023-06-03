@@ -4,7 +4,9 @@ XI Host is a set of .NET libraries and applications that support hosting compone
 
 # State of the Code
 
-XI Host is in the refinement, refactoring, and functional parity phases with [LandSandBoat server](https://github.com/LandSandBoat/server).  It is the intent of this software to provide an alternate solution to the login (and/or messaging) functionality and not a direct port.
+XI Host is in the refinement, refactoring, and functional parity phases with [LandSandBoat server](https://github.com/LandSandBoat/server).  It is the intent of this software to provide an alternate solution to the login (and/or messaging and world) functionality and not a direct port.
+
+Please familiarize yourself with the expectations indicated in [CONTRIBUTING.md](/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](/CODE_OF_CONDUCT.md).
 
 # License
 
