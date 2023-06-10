@@ -150,6 +150,7 @@ Waiting too long at any breakpoint will cause the client to timeout.
 # Behavioral Notes
 
 - This code manages memory and network connections gracefully.  It should not require restarting.
+- In combination with [xiloader updates made in branch xi-host](https://github.com/CarbyShop/xiloader/tree/xi-host), login and logout of multiple game clients from the same IP address is supported.
 - If maintenance is on, only accounts with GM characters can login and any non-GM character on the account will fail to character select with a world server maintenance error message.  This reduces stress on the login during maintenance, so that accounts with GM characters can login with priority.
 
 # Not Implemented
