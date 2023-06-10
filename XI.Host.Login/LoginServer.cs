@@ -367,17 +367,16 @@ namespace XI.Host.Login
 
         private bool IpAllowed(in uint client_addr)
         {
-            bool result = false;
+            bool result = true;
 
-            using (DataTable accounts_sessions_ip_count = Database.Select(Statements.Select.ACCOUNTS_SESSIONS_IP, Columns.Select.ACCOUNTS_SESSIONS_IP, new Couple<object>(Columns.CLIENT_ADDRESS_COLUMN, client_addr)))
+            if (IP_LOGIN_LIMIT > 0)
             {
-                if (accounts_sessions_ip_count != null)
+                using (DataTable accounts_sessions_ip_count = Database.Select(Statements.Select.ACCOUNTS_SESSIONS_IP, Columns.Select.ACCOUNTS_SESSIONS_IP, new Couple<object>(Columns.CLIENT_ADDRESS_COLUMN, client_addr)))
                 {
-                    result = accounts_sessions_ip_count.Rows.Count < IP_LOGIN_LIMIT;
-                }
-                else
-                {
-                    result = true;
+                    if (accounts_sessions_ip_count != null)
+                    {
+                        result = accounts_sessions_ip_count.Rows.Count < IP_LOGIN_LIMIT;
+                    }
                 }
             }
 
