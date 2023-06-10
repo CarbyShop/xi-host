@@ -159,4 +159,4 @@ Waiting too long at any breakpoint will cause the client to timeout.
 
 # Credits and History
 
-This software was originally ported from [Darkstar Project](https://github.com/DarkstarProject) and re-designed by [Brian Kesecker](https://github.com/bkesecker) specifically for [Eden Server](https://github.com/EdenServer) in Feburary 2020.  See the State of the Code section for what is currently going on.
+This software was originally ported from [Darkstar Project](https://github.com/DarkstarProject) and re-designed by [Brian Kesecker](https://github.com/bkesecker) specifically for [Eden Server](https://github.com/EdenServer) in February 2020.  See the State of the Code section for what is currently going on.
