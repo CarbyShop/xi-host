@@ -11,13 +11,14 @@ namespace XI.Host.Common
     {
         private class SettingsContainer
         {
+            public uint AccountIdMinimum { get; set; }
+            public int CleanUpSessionsFrequency { get; set; }
+            public ushort ClientReceiveBufferSize { get; set; }
+            public int DelayCharacterCreatedResponse { get; set; }
             public string LogType { get; set; }
             public string LogVerbosity { get; set; }
             public ushort ServerPopulationLimit { get; set; }
-            public int DelayCharacterCreatedResponse { get; set; }
-            public ushort ClientReceiveBufferSize { get; set; }
             public int TcpServerBacklog { get; set; }
-            public int CleanUpSessionsFrequency { get; set; }
         }
 
         private class HostContainer
@@ -40,13 +41,14 @@ namespace XI.Host.Common
             HostContainer container = JsonConvert.DeserializeObject<HostContainer>(File.ReadAllText("host.json"));
 
             // TODO use reflection to fill these automatically
+            Config.Add("AccountIdMinimum", container.Host.AccountIdMinimum.ToString());
+            Config.Add("CleanUpSessionsFrequency", container.Host.CleanUpSessionsFrequency.ToString());
+            Config.Add("ClientReceiveBufferSize", container.Host.ClientReceiveBufferSize.ToString());
+            Config.Add("DelayCharacterCreatedResponse", container.Host.DelayCharacterCreatedResponse.ToString());
             Config.Add("LogType", container.Host.LogType);
             Config.Add("LogVerbosity", container.Host.LogVerbosity);
             Config.Add("ServerPopulationLimit", container.Host.ServerPopulationLimit.ToString());
-            Config.Add("DelayCharacterCreatedResponse", container.Host.DelayCharacterCreatedResponse.ToString());
-            Config.Add("ClientReceiveBufferSize", container.Host.ClientReceiveBufferSize.ToString());
             Config.Add("TcpServerBacklog", container.Host.TcpServerBacklog.ToString());
-            Config.Add("CleanUpSessionsFrequency", container.Host.CleanUpSessionsFrequency.ToString());
 
             foreach (var dir in new string[] { container.ServerSettingsDirectory, container.ServerSettingsDirectory + Path.DirectorySeparatorChar + "default"})
             {

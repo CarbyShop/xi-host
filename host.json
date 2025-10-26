@@ -1,12 +1,13 @@
 {
   "ServerSettingsDirectory": "../../../../LandSandBoat/server/settings",
   "Host": {
+    "AccountIdMinimum": 1000,
+    "CleanUpSessionsFrequency": 30,
+    "ClientReceiveBufferSize": 2048,
+    "DelayCharacterCreatedResponse": 3000,
     "LogType": "Console",
     "LogVerbosity": "All",
     "ServerPopulationLimit": 0,
-    "DelayCharacterCreatedResponse": 3000,
-    "ClientReceiveBufferSize": 2048,
-    "TcpServerBacklog": 511,
-    "CleanUpSessionsFrequency": 30
+    "TcpServerBacklog": 511
   }
 }

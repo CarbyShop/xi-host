@@ -120,6 +120,7 @@ namespace XI.Host.Login
         public uint ExpectedVersion { get; private set; }
         public byte[] SearchPortBytes { get; private set; }
         public ushort ServerPopulationLimit { get; private set; }
+        public uint AccountIdMinimum { get; private set; }
         public int CleanUpSessionsFrequency { get; private set; }
         public int DelayCharacterCreatedResponse { get; set; }
         #endregion
@@ -188,6 +189,7 @@ namespace XI.Host.Login
             AuthenticationServer.Disconnected += AuthenticationServer_Disconnected;
 
             // Always last, because it starts immediately.
+            AccountIdMinimum = Global.GetConfigAsUInt32("AccountIdMinimum");
             CleanUpSessionsFrequency = Global.GetConfigAsInt32("CleanUpSessionsFrequency");
             CleanUpSessionsCallback = new System.Threading.TimerCallback(TryCleanUpSessions);
             CleanUpSessionsTimer = new System.Threading.Timer(CleanUpSessionsCallback, null, 0, CleanUpSessionsFrequency * 1000);
@@ -596,15 +598,15 @@ namespace XI.Host.Login
 
                                     newAccountId++;
 
-                                    if (newAccountId < 1000)
+                                    if (newAccountId < AccountIdMinimum)
                                     {
-                                        newAccountId = 1000;
+                                        newAccountId = AccountIdMinimum;
                                     }
                                 }
                                 else
                                 {
                                     // No rows means no accounts
-                                    newAccountId = 1000; // TODO make configurable
+                                    newAccountId = AccountIdMinimum;
                                 }
                             }
                             // Format needed 0000-00-00 00:00:00

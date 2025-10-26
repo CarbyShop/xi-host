@@ -116,7 +116,15 @@ namespace XI.Host.Login
 
         public static uint Max(this DataRow dataRow)
         {
-            return Convert.ToUInt32(dataRow["max"]);
+            uint result = 0;
+            var max = dataRow["max"];
+
+            if (max != DBNull.Value)
+            {
+                result = Convert.ToUInt32(max);
+            }
+
+            return result;
         }
 
         public static uint Expansions(this DataRow dataRow)
