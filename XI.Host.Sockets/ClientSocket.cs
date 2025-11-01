@@ -33,6 +33,7 @@ namespace XI.Host.Sockets
 
         public uint AccountId { get; set; }
         public ulong ActiveKey { get; set; }
+        public byte[] Hash { get; set; }
         #endregion
 
         //public IPAddress IpAddress
