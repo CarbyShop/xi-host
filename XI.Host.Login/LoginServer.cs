@@ -1,15 +1,17 @@
-using XI.Host.Common;
-using XI.Host.Sockets;
-using XI.Host.SQL;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using XI.Host.Common;
+using XI.Host.Sockets;
+using XI.Host.SQL;
 
 namespace XI.Host.Login
 {
@@ -45,6 +47,7 @@ namespace XI.Host.Login
         {
             public const byte CHARACTERS = 0xA1;
             public const byte SELECT = 0xA2;
+            public const byte HASH = 0xFE;
         }
 
         private static class Nation
@@ -144,6 +147,7 @@ namespace XI.Host.Login
 
             DataRequests[DataRequest.CHARACTERS] = new Action<ClientSocket, SocketEventArgs>(DataServer_Received_Characters);
             DataRequests[DataRequest.SELECT] = new Action<ClientSocket, SocketEventArgs>(DataServer_Received_Select);
+            DataRequests[DataRequest.HASH] = new Action<ClientSocket, SocketEventArgs>(DataServer_Received_Hash);
 
             ServerID = 0x64;
             ServerName = Encoding.UTF8.GetBytes(Global.Config["SERVER_NAME"]);
@@ -395,18 +399,53 @@ namespace XI.Host.Login
             return IpAllowed(client_addr);
         }
 
+        private ClientDetails TryGetClientDetails(in IResponse response, in SocketEventArgs args)
+        {
+            ClientDetails result = null;
+
+            try
+            {
+                byte magic = args.Data[0];
+
+                if (magic == 0xFF) // TODO: define constant
+                {
+                    ulong flags = BitConverter.ToUInt64(args.Data, 0x01); // Unused
+                    Version version = Version.Parse(Encoding.UTF8.GetString(args.Data, 0x51, 5));
+
+                    // TODO: validate version
+
+                    result = new ClientDetails(magic, flags, version);
+                }
+                else
+                {
+                    // Wrong magic
+                    AuthenticationErrorResponse(response, AuthenticationResponse.Codes.FAIL);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Bad version
+                AuthenticationErrorResponse(response, AuthenticationResponse.Codes.FAIL);
+            }
+
+            return result;
+        }
+
         private CredentialContainer GetCredentials(in IResponse response, in SocketEventArgs args, in bool getMac)
         {
+            int start = 0x09;
             CredentialContainer result = null;
-            string username = Utilities.TryReadUntil(args.Data, 0, MAXIMUM_USERNAME_LENGTH);
+            string username = Utilities.TryReadUntil(args.Data, start, MAXIMUM_USERNAME_LENGTH);
 
             if (!string.IsNullOrEmpty(username) && username.Length >= 3 && username.Length <= MAXIMUM_USERNAME_LENGTH)
             {
-                string password = Utilities.TryReadUntil(args.Data, MAXIMUM_USERNAME_LENGTH, MAXIMUM_PASSWORD_LENGTH);
+                string password = Utilities.TryReadUntil(args.Data, start + MAXIMUM_USERNAME_LENGTH, MAXIMUM_PASSWORD_LENGTH);
 
                 if (!string.IsNullOrEmpty(password) && password.Length >= 6 && password.Length <= MAXIMUM_PASSWORD_LENGTH)
                 {
-                    result = new CredentialContainer(username, password);
+                    string change = Utilities.TryReadUntil(args.Data, 0x30, MAXIMUM_PASSWORD_LENGTH);
+
+                    result = new CredentialContainer(username, password, change);
                 }
                 else
                 {
@@ -454,6 +493,17 @@ namespace XI.Host.Login
                         response.Append(client.AccountId);
                         //response.Append(byteToken.Bytes);
                         //response.Pad(235); // Confirmed, do not need.
+
+                        // TODO refactor
+                        uint hashData = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds() ^ (uint)Process.GetCurrentProcess().Id;
+                        byte[] inputBytes = BitConverter.GetBytes(hashData);
+
+                        using (MD5 md5 = MD5.Create())
+                        {
+                            client.Hash = md5.ComputeHash(inputBytes);
+
+                            response.Append(client.Hash);
+                        }
                     }
                     else
                     {
@@ -688,27 +738,37 @@ namespace XI.Host.Login
             args.Cancel = true; // Only one way to authenticate (set if all is good).
 
             // Check for exact sizes to limit denial of service points.
-            if (args.Data.Length == 33 || getMac)
+            if (args.Data.Length == 86 || getMac)
             {
-                byte authenticationRequest = args.Data[0x20];
+                byte authenticationRequest = args.Data[0x29];
 
                 Logger.Information(BuildLogMessage(client, args, authenticationRequest), MethodBase.GetCurrentMethod());
 
                 using (var authenticationResponse = new AuthenticationResponse())
                 {
-                    CredentialContainer credentials = GetCredentials(authenticationResponse, args, getMac);
+                    ClientDetails clientDetails = TryGetClientDetails(authenticationResponse, args);
 
-                    if (credentials != null)
+                    if (clientDetails != null)
                     {
-                        int index = authenticationRequest >> 4;
+                        CredentialContainer credentials = GetCredentials(authenticationResponse, args, getMac);
 
-                        if (index < AuthenticationRequests.Length)
+                        if (credentials != null)
                         {
-                            var action = AuthenticationRequests[index];
+                            int index = authenticationRequest >> 4;
 
-                            if (action != null)
+                            if (index < AuthenticationRequests.Length)
                             {
-                                action.Invoke(client, args, authenticationResponse, credentials);
+                                var action = AuthenticationRequests[index];
+
+                                if (action != null)
+                                {
+                                    action.Invoke(client, args, authenticationResponse, credentials);
+                                }
+                                else
+                                {
+                                    // Unhandled flag
+                                    AuthenticationErrorResponse(authenticationResponse, AuthenticationResponse.Codes.FAIL);
+                                }
                             }
                             else
                             {
@@ -718,13 +778,12 @@ namespace XI.Host.Login
                         }
                         else
                         {
-                            // Unhandled flag
-                            AuthenticationErrorResponse(authenticationResponse, AuthenticationResponse.Codes.FAIL);
+                            // AuthenticationErrorResponse already set by GetCredentials method.
                         }
                     }
                     else
                     {
-                        // AuthenticationErrorResponse already set by GetLoginInfo method.
+                        // AuthenticationErrorResponse already set by TryGetClientDetails method.
                     }
 
                     args.Response = authenticationResponse.GetBytes();
@@ -1941,6 +2000,12 @@ namespace XI.Host.Login
             }
         }
 
+        private void DataServer_Received_Hash(ClientSocket client, SocketEventArgs args)
+        {
+            client.Hash = new byte[16];
+            Array.Copy(args.Data, 0x09, client.Hash, 0x00, client.Hash.Length);
+        }
+
         #region "Data Events"
         private void DataServer_Connecting(ServerSocket sender, ClientSocket client, SocketEventArgs args)
         {
@@ -1962,7 +2027,7 @@ namespace XI.Host.Login
         private void DataServer_Received(ServerSocket sender, ClientSocket client, SocketEventArgs args)
         {
             // Could test length, but the client buffer is small.
-            byte dataRequest = args.Data[0x00];
+            byte dataRequest = args.Data[0];
 
             Logger.Information(BuildLogMessage(client, args, dataRequest), MethodBase.GetCurrentMethod());
 
