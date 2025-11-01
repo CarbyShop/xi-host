@@ -15,6 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XI.Host.SQL", "XI.Host.SQL\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A097844-3EAF-4DCF-9173-549389B35627}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
 		host.json = host.json
 		LICENSE = LICENSE
 		README.md = README.md

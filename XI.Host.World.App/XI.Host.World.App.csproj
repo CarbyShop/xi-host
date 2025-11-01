@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>..\Output\</OutputPath>
@@ -18,6 +18,6 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)clrzmq4\build\amd64" "$(SolutionDir)Output\net6.0\" /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)clrzmq4\build\amd64" "$(SolutionDir)Output\net8.0\" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

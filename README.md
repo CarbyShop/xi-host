@@ -15,7 +15,7 @@ Please familiarize yourself with the expectations indicated in [CONTRIBUTING.md]
 # Requirements
 
 1. Visual Studio 2022 or MS Build Tools 2022
-1. .NET 6.0
+1. .NET 8.0
 1. An OS capable of running the above stuff
 
 # Building On Windows For
@@ -32,12 +32,12 @@ Nothing special.
 
 The above command will not output some required files to the publish directory.  Use these commands from the Solution root.
 
-	copy /Y host.json "Output\net6.0\linux-x64\publish\host.json"
-	xcopy "clrzmq4\build\amd64" "Output\net6.0\linux-x64\publish" /Y
+	copy /Y host.json "Output\net8.0\linux-x64\publish\host.json"
+	xcopy "clrzmq4\build\amd64" "Output\net8.0\linux-x64\publish" /Y
 
 Use your favorite way to zip the published files for transport to Linux, or use the following PowerShell command.
 
-	Compress-Archive 'Output\net6.0\linux-x64\publish' -DestinationPath 'Output\net6.0\linux-x64\XI.Host.zip'
+	Compress-Archive 'Output\net8.0\linux-x64\publish' -DestinationPath 'Output\net8.0\linux-x64\XI.Host.zip'
 
 # Building On Linux
 
