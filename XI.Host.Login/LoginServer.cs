@@ -94,7 +94,7 @@ namespace XI.Host.Login
         private readonly Random random = new Random((DateTime.UtcNow.Year << 16) & ((DateTime.UtcNow.Minute * 4) << 8) & (DateTime.UtcNow.Second * 4));
         private readonly Action<ClientSocket, SocketEventArgs, AuthenticationResponse, CredentialContainer>[] AuthenticationRequests = new Action<ClientSocket, SocketEventArgs, AuthenticationResponse, CredentialContainer>[(AuthenticationRequest.UPDATE >> 4) + 1];
         private readonly Action<ServerSocket, ClientSocket, SocketEventArgs>[] ViewRequests = new Action<ServerSocket, ClientSocket, SocketEventArgs>[ViewRequest.VERSION + 1];
-        private readonly Action<ClientSocket, SocketEventArgs>[] DataRequests = new Action<ClientSocket, SocketEventArgs>[DataRequest.SELECT + 1];
+        private readonly Action<ClientSocket, SocketEventArgs>[] DataRequests = new Action<ClientSocket, SocketEventArgs>[DataRequest.HASH + 1];
         private readonly Func<DataRow, byte> funcGetContentIdCount = (row) => { return row.ContentIdCount(); };
 
         private readonly VersionLockTypes versionLockType = VersionLockTypes.Disabled;
