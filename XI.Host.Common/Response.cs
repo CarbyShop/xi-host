@@ -136,6 +136,8 @@ namespace XI.Host.Common
             public static readonly byte CHANGE_PASSWORD_FAIL = 0x07;
             public static readonly byte CREATE_DISABLED = 0x08;
             public static readonly byte CREATE_FAIL = 0x09;
+            public static readonly byte LOGGED_IN = 0x0A;
+            public static readonly byte VERSION = 0x0B;
             public static readonly byte CREATE_WARNING_LOCKOUT = 0x44; // DNE in xiloader, will silently close the connection.
             public static readonly byte WAIT = 0x75;
             public static readonly byte INVALID = 0x76;

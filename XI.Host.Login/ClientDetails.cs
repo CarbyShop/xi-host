@@ -9,6 +9,7 @@ namespace XI.Host.Login
         public ulong Flags { get; private set; }
         //public byte[] Reserved { get; private set; } // 17 bytes
         public Version Version { get; private set; }
+        public CredentialContainer Credentials { get; set; }
 
         [Custom("Useful for some custom server implementations.")]
         public string MAC { get; set; }

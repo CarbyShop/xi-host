@@ -412,9 +412,15 @@ namespace XI.Host.Login
                     ulong flags = BitConverter.ToUInt64(args.Data, 0x01); // Unused
                     Version version = Version.Parse(Encoding.UTF8.GetString(args.Data, 0x51, 5));
 
-                    // TODO: validate version
-
-                    result = new ClientDetails(magic, flags, version);
+                    if (true) // TODO: validate version
+                    {
+                        result = new ClientDetails(magic, flags, version);
+                    }
+                    else
+                    {
+                        // Wrong version
+                        AuthenticationErrorResponse(response, AuthenticationResponse.Codes.VERSION);
+                    }
                 }
                 else
                 {
@@ -422,7 +428,7 @@ namespace XI.Host.Login
                     AuthenticationErrorResponse(response, AuthenticationResponse.Codes.FAIL);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Bad version
                 AuthenticationErrorResponse(response, AuthenticationResponse.Codes.FAIL);
@@ -444,6 +450,8 @@ namespace XI.Host.Login
                 if (!string.IsNullOrEmpty(password) && password.Length >= 6 && password.Length <= MAXIMUM_PASSWORD_LENGTH)
                 {
                     string change = Utilities.TryReadUntil(args.Data, 0x30, MAXIMUM_PASSWORD_LENGTH);
+
+                    // TODO ignore change?
 
                     result = new CredentialContainer(username, password, change);
                 }
@@ -494,12 +502,13 @@ namespace XI.Host.Login
                         //response.Append(byteToken.Bytes);
                         //response.Pad(235); // Confirmed, do not need.
 
-                        // TODO refactor
                         uint hashData = (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds() ^ (uint)Process.GetCurrentProcess().Id;
                         byte[] inputBytes = BitConverter.GetBytes(hashData);
 
+                        // TODO refactor to use global MD5
                         using (MD5 md5 = MD5.Create())
                         {
+                            // TODO this client gets trashed, so the hash needs to be added somewhere else to do validation later
                             client.Hash = md5.ComputeHash(inputBytes);
 
                             response.Append(client.Hash);
@@ -578,7 +587,7 @@ namespace XI.Host.Login
                         else
                         {
                             // Session still active.  Clean-up will eventually kick the session out if player were disconnected.
-                            AuthenticationErrorResponse(response, AuthenticationResponse.Codes.WAIT);
+                            AuthenticationErrorResponse(response, AuthenticationResponse.Codes.LOGGED_IN); // was WAIT
                         }
                     }
                     else
@@ -746,6 +755,9 @@ namespace XI.Host.Login
 
                 using (var authenticationResponse = new AuthenticationResponse())
                 {
+                    // Container object, flagged for disposal by GC when this method ends.  So, when the view/data
+                    // socket connects, it has no access to it (yet).  This is on-purpose, so that the
+                    // username/password details do not remain in memory.
                     ClientDetails clientDetails = TryGetClientDetails(authenticationResponse, args);
 
                     if (clientDetails != null)
@@ -755,6 +767,8 @@ namespace XI.Host.Login
                         if (credentials != null)
                         {
                             int index = authenticationRequest >> 4;
+
+                            clientDetails.Credentials = credentials;
 
                             if (index < AuthenticationRequests.Length)
                             {
@@ -2002,8 +2016,17 @@ namespace XI.Host.Login
 
         private void DataServer_Received_Hash(ClientSocket client, SocketEventArgs args)
         {
-            client.Hash = new byte[16];
-            Array.Copy(args.Data, 0x09, client.Hash, 0x00, client.Hash.Length);
+            if (args.Data.Length > 0x09 + SIXTEEN)
+            {
+                client.Hash = new byte[SIXTEEN];
+                Array.Copy(args.Data, 0x09, client.Hash, 0x00, client.Hash.Length);
+
+                // TODO validate hash
+            }
+            else
+            {
+                // TODO invalid packet
+            }
         }
 
         #region "Data Events"

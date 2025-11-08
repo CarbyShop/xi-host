@@ -122,6 +122,7 @@ Waiting too long at any breakpoint will cause the client to timeout.
 1. Able to create a character
 1. Able to create a second character
 1. Able to select a character and zone-in
+1. Able to select a character with maximum character ID and zone-in
 1. TODO: Able to delete a character
 1. Able to /say and others see it
 1. Able to /shout and others see it

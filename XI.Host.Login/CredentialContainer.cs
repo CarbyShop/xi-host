@@ -9,8 +9,7 @@
         /// Change password.
         /// </summary>
         public string Change { get; private set; }
-        //public byte[] Hash { get; set; }
-
+        
         public CredentialContainer(string username, string password)
         {
             Username = username;
