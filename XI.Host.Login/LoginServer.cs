@@ -167,7 +167,7 @@ namespace XI.Host.Login
             // Instantiation order should be from last disposed to first to ensure everything is setup for the first incoming connection.
             Database = new MySqlConnectionManager();
 
-            XI.Host.Security.TLS.Create(Global.Config["LOGIN_AUTH_IP"]);
+            XI.Host.Security.TLS.TryCreate(Global.Config["LOGIN_AUTH_IP"]);
 
             ushort clientReceiveBufferSize = Global.GetConfigAsUShort("ClientReceiveBufferSize");
             int tcpServerBacklog = Global.GetConfigAsInt32("TcpServerBacklog");
