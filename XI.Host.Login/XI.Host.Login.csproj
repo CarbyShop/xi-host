@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\XI.Host.Common\XI.Host.Common.csproj" />
+    <ProjectReference Include="..\XI.Host.Security\XI.Host.Security.csproj" />
     <ProjectReference Include="..\XI.Host.Sockets\XI.Host.Sockets.csproj" />
     <ProjectReference Include="..\XI.Host.SQL\XI.Host.SQL.csproj" />
   </ItemGroup>

@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroMQ.netcore", "clrzmq4\Z
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XI.Host.Tests", "XI.Host.Tests\XI.Host.Tests.csproj", "{7179ED79-E7ED-4885-A2A8-173201F17715}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XI.Host.Security", "XI.Host.Security\XI.Host.Security.csproj", "{331C7097-ACE5-0289-4546-93047CDD2A9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{7179ED79-E7ED-4885-A2A8-173201F17715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7179ED79-E7ED-4885-A2A8-173201F17715}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7179ED79-E7ED-4885-A2A8-173201F17715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{331C7097-ACE5-0289-4546-93047CDD2A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331C7097-ACE5-0289-4546-93047CDD2A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331C7097-ACE5-0289-4546-93047CDD2A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331C7097-ACE5-0289-4546-93047CDD2A9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

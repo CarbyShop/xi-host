@@ -10,7 +10,7 @@ namespace XI.Host.Login
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint GetCharacterId(this byte[] data)
         {
-            return BitConverter.ToUInt32(data, 28);
+            return BitConverter.ToUInt32(data, 28); // TODO 32?
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
