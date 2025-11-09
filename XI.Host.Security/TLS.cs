@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -12,6 +13,8 @@ namespace XI.Host.Security
     {
         public static readonly string LOGIN_KEY = "login.key";
         public static readonly string LOGIN_CERT = "login.cert";
+
+        public static X509Certificate2 Certificate { get; private set; }
 
         private static bool IsValid(NetworkInterface networkInterface)
         {
@@ -56,6 +59,8 @@ namespace XI.Host.Security
             {
                 if (File.Exists(LOGIN_KEY) && File.Exists(LOGIN_CERT))
                 {
+                    TLS.Certificate = X509Certificate2.CreateFromCertFile(LOGIN_CERT) as X509Certificate2;
+                    
                     return result;
                 }
             }
@@ -81,7 +86,9 @@ namespace XI.Host.Security
                 //request.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, false));
                 //request.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(request.PublicKey, false));
 
-                var cert = request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(20));
+                var x509 = request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(20));
+
+                TLS.Certificate = x509;
 
                 byte[] pkcs8 = rsa.ExportPkcs8PrivateKey();
                 string key = Convert.ToBase64String(pkcs8, Base64FormattingOptions.InsertLineBreaks);
@@ -89,7 +96,7 @@ namespace XI.Host.Security
 
                 File.WriteAllText(LOGIN_KEY, contents);
 
-                string certificate = Convert.ToBase64String(cert.RawData, Base64FormattingOptions.InsertLineBreaks);
+                string certificate = Convert.ToBase64String(x509.RawData, Base64FormattingOptions.InsertLineBreaks);
                 contents = $"-----BEGIN CERTIFICATE-----\n{certificate}\n-----END CERTIFICATE-----";
 
                 File.WriteAllText(LOGIN_CERT, contents);
@@ -103,7 +110,7 @@ namespace XI.Host.Security
             {
                 rsa?.Dispose();
             }
-
+            
             return result;
         }
     }
