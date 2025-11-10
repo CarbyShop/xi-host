@@ -69,7 +69,7 @@ namespace XI.Host.Login
         // Incidentally, a time test reveals in-lining the value is faster.
         private const int SIXTEEN = 16;
         private const int MAXIMUM_USERNAME_LENGTH = SIXTEEN;
-        private const int MAXIMUM_PASSWORD_LENGTH = SIXTEEN;
+        private const int MAXIMUM_PASSWORD_LENGTH = SIXTEEN * 2;
         private const int MAXIMUM_CHARACTER_NAME_LENGTH = SIXTEEN;
         private const int MAXIMUM_SERVER_NAME_LENGTH = SIXTEEN;
         private const byte MAXIMUM_CONTENT_ID_COUNT = SIXTEEN;
@@ -412,7 +412,7 @@ namespace XI.Host.Login
                 if (magic == 0xFF) // TODO: define constant
                 {
                     ulong flags = BitConverter.ToUInt64(args.Data, 0x01); // Unused
-                    Version version = Version.Parse(Encoding.UTF8.GetString(args.Data, 0x51, 5));
+                    Version version = Version.Parse(Encoding.UTF8.GetString(args.Data, 0x61, 5)); // was 0x51
 
                     if (true) // TODO: validate version
                     {
@@ -451,7 +451,7 @@ namespace XI.Host.Login
 
                 if (!string.IsNullOrEmpty(password) && password.Length >= 6 && password.Length <= MAXIMUM_PASSWORD_LENGTH)
                 {
-                    string change = Utilities.TryReadUntil(args.Data, 0x30, MAXIMUM_PASSWORD_LENGTH);
+                    string change = Utilities.TryReadUntil(args.Data, 0x40, MAXIMUM_PASSWORD_LENGTH); // was 0x30
 
                     // TODO ignore change?
 
@@ -749,9 +749,9 @@ namespace XI.Host.Login
             args.Cancel = true; // Only one way to authenticate (set if all is good).
 
             // Check for exact sizes to limit denial of service points.
-            if (args.Data.Length == 86 || getMac)
+            if (args.Data.Length == 102 || getMac) // was 86
             {
-                byte authenticationRequest = args.Data[0x29];
+                byte authenticationRequest = args.Data[0x39]; // was 0x29
 
                 Logger.Information(BuildLogMessage(client, args, authenticationRequest), MethodBase.GetCurrentMethod());
 
