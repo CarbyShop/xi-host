@@ -2,6 +2,8 @@
 
 Documents the major changes, additions, and removals when they happened.  It is intended to be a summary and not an exhaustive list.  For an exhaustive list, see the repository commit history.
 
+- 2025-11-11 Fixed handling of character IDs with values requiring 3 bytes.
+- 2025-11-09 Initial TLS code and authentication offset changes.
 - 2025-01-11 Updated NuGet package dependencies to the latest available versions.
 - 2025-01-11 Updated to .NET 8.0.
 - 2025-10-26 Added Account ID Minimum property.

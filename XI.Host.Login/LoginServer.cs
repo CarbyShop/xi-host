@@ -878,7 +878,7 @@ namespace XI.Host.Login
             bool result = true;
 
             // Use to create a character and test the rollover ID.
-            //free = 0x00010000;
+            //free = 0x00020000;
             //return true;
 
             // Use to create a character and test the maximum ID.
@@ -1341,7 +1341,7 @@ namespace XI.Host.Login
                 return;
             }
 
-            uint charid = args.Data.GetCharacterId();
+            uint charid = args.Data.GetCharacterId(); // TODO check delete has the correct ID
 
             // Validated view connections could intercept and try to delete chararacters that are not
             // associated with their account.
@@ -1553,7 +1553,9 @@ namespace XI.Host.Login
                     for (int i = 0; i < charsDataTable.Rows.Count; i++)
                     {
                         characterId = charsDataTable.Rows[i].CharacterId();
-                        contentId = characterId;
+
+                        // Use to show difference between charId and contentId in data.
+                        contentId = characterId; //(uint)(0x87 + i);
 
                         ExpandCharacterId(characterId, out characterIdLSBs, out characterIdMSBs);
 
